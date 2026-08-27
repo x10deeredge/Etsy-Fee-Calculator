@@ -1,51 +1,83 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Etsy Pro Analytics | Dark 3D Edition</title>
+  <title>Etsy Quantum Engine | 3D WebGL Analytics Suite</title>
   
+  <!-- Tailwind CSS, Three.js & GSAP -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #000000;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
-      background-size: 28px 28px;
+    * {
+      box-sizing: border-box;
+      user-select: none;
     }
-    .heading-font {
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #030712;
+      overflow-x: hidden;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .font-display {
       font-family: 'Space Grotesk', sans-serif;
     }
-    .card-stealth {
-      background: rgba(10, 10, 10, 0.75);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glass-hull {
+      background: radial-gradient(130% 100% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, rgba(10, 15, 29, 0.7) 100%);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    .card-hologram {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       transform-style: preserve-3d;
     }
-    .card-stealth:hover {
-      border-color: rgba(255, 255, 255, 0.2);
+    .card-hologram:hover {
+      border-color: rgba(249, 115, 22, 0.5);
+      box-shadow: 0 0 30px rgba(249, 115, 22, 0.2), inset 0 0 15px rgba(249, 115, 22, 0.05);
+      transform: translateY(-4px) scale(1.01);
     }
-    .input-stealth {
-      background: rgba(18, 18, 18, 0.9);
+    .input-field {
+      background: rgba(8, 12, 22, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .input-stealth:focus {
+    .input-field:focus {
       border-color: #f97316;
-      box-shadow: 0 0 15px rgba(249, 115, 22, 0.25);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
       outline: none;
+      background: rgba(12, 18, 32, 0.95);
     }
-    .glow-orange {
-      box-shadow: 0 0 35px -5px rgba(249, 115, 22, 0.25);
+    .cyber-gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .glow-green {
-      box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.25);
+    .radar-grid {
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
@@ -54,138 +86,160 @@
     }
   </style>
 </head>
-<body class="text-neutral-200 min-h-screen flex flex-col justify-center items-center p-4 md:p-10 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
+<body class="text-slate-100 min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 md:p-12 relative selection:bg-orange-500 selection:text-white">
 
-  <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-gradient-to-tr from-orange-600/10 via-amber-500/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10"></div>
-  <div class="fixed bottom-10 right-10 w-[300px] h-[300px] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+  <!-- Three.js 3D Interactive GPU Canvas -->
+  <canvas id="webgl-canvas"></canvas>
 
-  <main class="w-full max-w-6xl space-y-8">
+  <!-- Main Container -->
+  <div class="w-full max-w-6xl glass-hull rounded-[2.5rem] p-6 sm:p-8 md:p-12 relative z-10 my-auto radar-grid border border-white/10">
     
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-neutral-900">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 text-xs font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Etsy Engine v3.0</span>
+    <!-- Header HUD -->
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-8 border-b border-white/10">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-mono tracking-wider uppercase">
+          <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+          <span>WebGL Kinetic Engine • Online</span>
         </div>
-        <h1 class="text-3xl md:text-5xl font-black heading-font tracking-tight text-white">
-          Etsy <span class="bg-gradient-to-r from-orange-400 via-amber-200 to-white bg-clip-text text-transparent">Profit Matrix</span>
+        <h1 class="text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight cyber-gradient-text">
+          ETSY QUANTUM
         </h1>
-        <p class="text-neutral-400 text-xs md:text-sm">Real-time unit economics, net margins & fee optimization toolkit.</p>
+        <p class="text-slate-400 text-xs sm:text-sm max-w-xl">
+          Real-time interactive 3D unit economics simulator, multi-tier fee matrix, and margin calculator.
+        </p>
       </div>
 
-      <div class="flex items-center gap-1.5 bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800">
-        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-bold bg-neutral-800 text-white transition-all shadow-md">USD ($)</button>
-        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
-        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
+      <!-- Currency Switcher HUD -->
+      <div class="flex items-center bg-slate-950/80 p-1.5 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md">
+        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white shadow-lg transition-all">USD ($)</button>
+        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-slate-400 hover:text-white transition-all">GBP (£)</button>
+        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-slate-400 hover:text-white transition-all">EUR (€)</button>
       </div>
     </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Main Dynamic Grid -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
       
+      <!-- Input Control Matrix (7 Cols) -->
       <section class="lg:col-span-7 space-y-6">
         
-        <div class="card-stealth rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.05">
-          <h2 class="text-xs uppercase tracking-widest font-bold text-neutral-400 heading-font">01 / Pricing & Shipping</h2>
-          
+        <!-- Sales & Logistics -->
+        <div class="card-hologram rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="3" data-tilt-speed="500">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">01 // REVENUE & PRICING</span>
+            <span class="text-[10px] text-slate-500 font-mono">INPUT_NODE_A</span>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Listing Retail Price (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="itemPrice" value="150" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-bold text-lg">
+              <label class="text-xs font-medium text-slate-300">Listing Retail Price (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemPrice" value="160" class="input-field w-full rounded-2xl px-4 py-3 text-white font-mono font-bold text-lg">
             </div>
             <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Shipping Charged to Buyer (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="shipCharge" value="0" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-bold text-lg">
+              <label class="text-xs font-medium text-slate-300">Shipping Charged to Buyer (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCharge" value="0" class="input-field w-full rounded-2xl px-4 py-3 text-white font-mono font-bold text-lg">
             </div>
           </div>
         </div>
 
-        <div class="card-stealth rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.05">
-          <h2 class="text-xs uppercase tracking-widest font-bold text-neutral-400 heading-font">02 / Manufacturing & Logistics</h2>
-          
+        <!-- Cost Breakdown Matrix -->
+        <div class="card-hologram rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="3" data-tilt-speed="500">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 font-bold">02 // BASE OVERHEADS</span>
+            <span class="text-[10px] text-slate-500 font-mono">INPUT_NODE_B</span>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Material Cost (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="itemCost" value="35" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+              <label class="text-xs font-medium text-slate-300">Material Cost (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemCost" value="40" class="input-field w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
             </div>
             <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Actual Shipping (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="shipCost" value="22" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+              <label class="text-xs font-medium text-slate-300">Shipping Cost (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCost" value="25" class="input-field w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
             </div>
             <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Packaging/Overhead (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="overheadCost" value="8" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+              <label class="text-xs font-medium text-slate-300">Packaging/Labor (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="overheadCost" value="10" class="input-field w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
             </div>
           </div>
         </div>
 
+        <!-- Toggles -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="card-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
+          <label class="card-hologram rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
-              <p class="text-sm font-semibold text-white">Offsite Ads (15%)</p>
-              <p class="text-xs text-neutral-400">Apply Etsy offsite campaign fee</p>
+              <p class="text-sm font-bold text-white">Offsite Ads Engine</p>
+              <p class="text-xs text-slate-400">15% fee on attributed sales</p>
             </div>
             <input type="checkbox" id="offsiteAds" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
 
-          <label class="card-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
+          <label class="card-hologram rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
-              <p class="text-sm font-semibold text-white">Etsy Plus Perks</p>
-              <p class="text-xs text-neutral-400">Waives individual listing fee</p>
+              <p class="text-sm font-bold text-white">Etsy Plus Subscription</p>
+              <p class="text-xs text-slate-400">Applies 15 free listing credits</p>
             </div>
             <input type="checkbox" id="etsyPlus" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
         </div>
 
-        <div class="card-stealth rounded-3xl p-5 space-y-3 border-orange-500/20">
+        <!-- Reverse Target Solver -->
+        <div class="card-hologram rounded-3xl p-6 space-y-4 border-orange-500/30">
           <div class="flex items-center justify-between">
-            <span class="text-xs uppercase font-bold text-orange-400 heading-font tracking-wider">🎯 Reverse Target Solver</span>
-            <span class="text-xs text-neutral-400">Calculate ideal selling price</span>
+            <span class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">🎯 REVERSE PROFIT TARGET SOLVER</span>
+            <span class="text-[10px] text-slate-500 font-mono">ALGO_SOLVER</span>
           </div>
-          <div class="flex gap-3">
-            <input type="number" id="targetProfit" placeholder="Target Net Profit ($)" class="input-stealth w-full rounded-2xl px-4 py-2.5 text-sm text-white">
-            <button onclick="calculateTargetPrice()" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold rounded-2xl text-xs transition-all shrink-0">Solve Price</button>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="number" id="targetProfit" placeholder="Enter Desired Net Profit ($)" class="input-field w-full rounded-2xl px-4 py-3 text-sm text-white font-mono">
+            <button onclick="calculateTargetPrice()" class="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white font-bold font-mono text-xs rounded-2xl transition-all shrink-0 shadow-lg shadow-orange-500/25">SOLVE PRICE</button>
           </div>
-          <p id="targetResult" class="text-xs text-neutral-300 hidden"></p>
+          <p id="targetResult" class="text-xs font-mono text-slate-300 hidden p-3 rounded-xl bg-orange-500/10 border border-orange-500/20"></p>
         </div>
 
       </section>
 
+      <!-- Real-Time Output Cockpit (5 Cols) -->
       <section class="lg:col-span-5 space-y-6">
         
-        <div class="card-stealth glow-green rounded-3xl p-6 md:p-8 space-y-4 border-emerald-500/30" data-tilt data-tilt-max="7" data-tilt-glare data-tilt-max-glare="0.1">
+        <!-- Net Realized Profit Hero -->
+        <div class="card-hologram rounded-3xl p-8 space-y-4 border-emerald-500/40 relative overflow-hidden" data-tilt data-tilt-max="5">
+          <div class="absolute -right-12 -top-12 w-36 h-36 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 heading-font">Net Realized Profit</span>
-            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold" id="marginDisplay">0% Margin</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400">NET ESTIMATED PROFIT</span>
+            <span class="text-xs px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-bold" id="marginDisplay">0% MARGIN</span>
           </div>
           
-          <div class="text-5xl md:text-6xl font-black heading-font text-white tracking-tight" id="netProfit">
+          <div class="text-5xl sm:text-6xl font-black font-display text-white tracking-tight" id="netProfit">
             $0.00
           </div>
 
-          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-800 text-xs">
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
             <div>
-              <p class="text-neutral-400">Gross Revenue</p>
-              <p class="text-base font-bold text-white mt-0.5" id="totalRev">$0.00</p>
+              <p class="text-slate-400">GROSS REVENUE</p>
+              <p class="text-lg font-bold text-white mt-1" id="totalRev">$0.00</p>
             </div>
             <div>
-              <p class="text-neutral-400">Total Deductions</p>
-              <p class="text-base font-bold text-rose-400 mt-0.5" id="totalExp">$0.00</p>
+              <p class="text-slate-400">TOTAL COSTS</p>
+              <p class="text-lg font-bold text-rose-400 mt-1" id="totalExp">$0.00</p>
             </div>
           </div>
         </div>
 
-        <div class="card-stealth rounded-3xl p-6 space-y-3 text-xs">
-          <div class="flex justify-between pb-2 border-b border-neutral-800">
-            <span class="text-neutral-400">Listing Fee</span>
-            <span class="font-bold text-neutral-200" id="feeListing">$0.20</span>
+        <!-- Fee Ledger HUD -->
+        <div class="card-hologram rounded-3xl p-6 space-y-3 font-mono text-xs">
+          <div class="flex justify-between pb-2 border-b border-white/5">
+            <span class="text-slate-400">Listing Fee</span>
+            <span class="font-bold text-slate-200" id="feeListing">$0.20</span>
           </div>
-          <div class="flex justify-between pb-2 border-b border-neutral-800">
-            <span class="text-neutral-400">Transaction Fee (6.5%)</span>
-            <span class="font-bold text-neutral-200" id="feeTx">$0.00</span>
+          <div class="flex justify-between pb-2 border-b border-white/5">
+            <span class="text-slate-400">Transaction Cut (6.5%)</span>
+            <span class="font-bold text-slate-200" id="feeTx">$0.00</span>
           </div>
-          <div class="flex justify-between pb-2 border-b border-neutral-800">
-            <span class="text-neutral-400">Payment Gateway (3% + $0.25)</span>
-            <span class="font-bold text-neutral-200" id="feeProc">$0.00</span>
+          <div class="flex justify-between pb-2 border-b border-white/5">
+            <span class="text-slate-400">Payment Gateway (3% + $0.25)</span>
+            <span class="font-bold text-slate-200" id="feeProc">$0.00</span>
           </div>
           <div class="flex justify-between font-bold text-rose-400 pt-1">
             <span>Total Etsy Cut</span>
@@ -193,20 +247,112 @@
           </div>
         </div>
 
-        <div class="card-stealth rounded-3xl p-5 flex items-center justify-center h-48 relative">
+        <!-- 3D Chart Canvas -->
+        <div class="card-hologram rounded-3xl p-5 flex items-center justify-center h-48 relative">
           <canvas id="profitChart"></canvas>
         </div>
 
-        <button onclick="exportCSV()" class="w-full py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 hover:border-neutral-700 text-neutral-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-          <span>⚡ Export CSV Summary</span>
+        <!-- CSV Export -->
+        <button onclick="exportCSV()" class="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white font-mono font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-2xl">
+          <span>⚡ DOWNLOAD ORDER METRICS (.CSV)</span>
         </button>
 
       </section>
 
-    </div>
-  </main>
+    </main>
+  </div>
 
+  <!-- 3D Three.js Engine Script -->
   <script>
+    /* ================= THREE.JS INTERACTIVE 3D BACKGROUND ================= */
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    camera.position.z = 45;
+
+    // 1. Particle Constellation
+    const particleCount = 1000;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 120;
+      positions[i + 1] = (Math.random() - 0.5) * 120;
+      positions[i + 2] = (Math.random() - 0.5) * 120;
+
+      // Subtle cyan/orange tech glow particles
+      colors[i] = Math.random() > 0.5 ? 0.97 : 0.2;
+      colors[i + 1] = Math.random() > 0.5 ? 0.45 : 0.6;
+      colors[i + 2] = 0.9;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 0.8,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.6
+    });
+
+    const particles = new THREE.Points(geometry, particleMaterial);
+    scene.add(particles);
+
+    // 2. Futuristic Rotating Torus Mesh (Cinematic Core)
+    const torusGeometry = new THREE.TorusGeometry(20, 0.4, 16, 100);
+    const torusMaterial = new THREE.MeshBasicMaterial({
+      color: 0xf97316,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.15
+    });
+    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+    scene.add(torus);
+
+    // Mouse Tracking for Interactive Parallax
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+      mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
+
+      particles.rotation.y += 0.001;
+      particles.rotation.x += 0.0005;
+
+      torus.rotation.x += 0.003;
+      torus.rotation.y += 0.005;
+
+      camera.position.x = targetX * 30;
+      camera.position.y = -targetY * 30;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    /* ================= CALCULATOR ENGINE & STATE ================= */
     let activeCurrency = '$';
     let chartInstance = null;
 
@@ -217,9 +363,9 @@
       document.querySelectorAll('.currency-symbol').forEach(el => el.innerText = symbol);
       
       ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
-        document.getElementById(id).className = 'px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all';
+        document.getElementById(id).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold text-slate-400 hover:text-white transition-all';
       });
-      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-bold bg-neutral-800 text-white transition-all shadow-md';
+      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white shadow-lg transition-all';
       
       calculate();
     }
@@ -247,7 +393,7 @@
       const margin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
 
       document.getElementById('netProfit').innerText = `${activeCurrency}${netProfit.toFixed(2)}`;
-      document.getElementById('marginDisplay').innerText = `${margin.toFixed(1)}% Margin`;
+      document.getElementById('marginDisplay').innerText = `${margin.toFixed(1)}% MARGIN`;
       document.getElementById('totalRev').innerText = `${activeCurrency}${revenue.toFixed(2)}`;
       document.getElementById('totalExp').innerText = `${activeCurrency}${totalExpenses.toFixed(2)}`;
       document.getElementById('feeListing').innerText = `${activeCurrency}${listingFee.toFixed(2)}`;
@@ -265,21 +411,21 @@
       chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Overhead & Production', 'Etsy Fees', 'Net Realized Profit'],
+          labels: ['Base Overheads', 'Etsy Fees', 'Net Profit'],
           datasets: [{
             data: [costs, fees, profit],
-            backgroundColor: ['#404040', '#f43f5e', '#10b981'],
+            backgroundColor: ['#475569', '#f43f5e', '#10b981'],
             borderWidth: 0,
-            hoverOffset: 4
+            hoverOffset: 6
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'right', labels: { boxWidth: 10, color: '#a3a3a3', font: { size: 10 } } }
+            legend: { position: 'right', labels: { boxWidth: 8, color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } }
           },
-          cutout: '75%'
+          cutout: '76%'
         }
       });
     }
@@ -300,7 +446,7 @@
       
       const resElem = document.getElementById('targetResult');
       resElem.classList.remove('hidden');
-      resElem.innerHTML = `To clear <b>${activeCurrency}${target.toFixed(2)}</b>, list at: <span class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</span>`;
+      resElem.innerHTML = `TARGET ACQUIRED: List item at <b class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</b> to clear pure profit of ${activeCurrency}${target.toFixed(2)}`;
     }
 
     function exportCSV() {
@@ -321,7 +467,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "etsy_profit_matrix.csv");
+      link.setAttribute("download", "etsy_quantum_breakdown.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -332,7 +478,6 @@
       document.getElementById(id).addEventListener('change', calculate);
     });
 
-    // Initialize
     calculate();
   </script>
 </body>
