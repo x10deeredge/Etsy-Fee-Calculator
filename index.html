@@ -1,34 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Etsy Pro Analytics & Profit Engine 3D</title>
+  <title>Etsy Pro Analytics | Dark 3D Edition</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at 10% 20%, #1e1b4b 0%, #090d16 50%, #020617 100%);
-      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background-color: #000000;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+      background-size: 28px 28px;
     }
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+    .heading-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .card-stealth {
+      background: rgba(10, 10, 10, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transform-style: preserve-3d;
     }
-    .card-3d {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .card-stealth:hover {
+      border-color: rgba(255, 255, 255, 0.2);
     }
-    .card-3d:hover {
-      transform: translateY(-3px);
-      border-color: rgba(249, 115, 22, 0.4);
-      box-shadow: 0 12px 24px -6px rgba(249, 115, 22, 0.15);
+    .input-stealth {
+      background: rgba(18, 18, 18, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+    .input-stealth:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.25);
+      outline: none;
+    }
+    .glow-orange {
+      box-shadow: 0 0 35px -5px rgba(249, 115, 22, 0.25);
+    }
+    .glow-green {
+      box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.25);
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
@@ -37,150 +54,157 @@
     }
   </style>
 </head>
-<body class="text-slate-100 p-4 md:p-8 flex justify-center items-center">
+<body class="text-neutral-200 min-h-screen flex flex-col justify-center items-center p-4 md:p-10 relative overflow-x-hidden selection:bg-orange-500 selection:text-white">
 
-  <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 md:p-10 relative overflow-hidden my-auto">
-    <!-- Glow Effects -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-gradient-to-tr from-orange-600/10 via-amber-500/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10"></div>
+  <div class="fixed bottom-10 right-10 w-[300px] h-[300px] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-    <!-- Header & Currency Switcher -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-6 border-b border-slate-800">
-      <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">
-          ⚡ Enterprise Seller Suite
+  <main class="w-full max-w-6xl space-y-8">
+    
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-neutral-900">
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Etsy Engine v3.0</span>
         </div>
-        <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-white via-slate-200 to-orange-400 bg-clip-text text-transparent">
-          Etsy Fee & Profit Engine
+        <h1 class="text-3xl md:text-5xl font-black heading-font tracking-tight text-white">
+          Etsy <span class="bg-gradient-to-r from-orange-400 via-amber-200 to-white bg-clip-text text-transparent">Profit Matrix</span>
         </h1>
+        <p class="text-neutral-400 text-xs md:text-sm">Real-time unit economics, net margins & fee optimization toolkit.</p>
       </div>
 
-      <!-- Currency Picker -->
-      <div class="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800">
-        <span class="text-xs text-slate-400 px-2 font-medium">Currency:</span>
-        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-3 py-1 rounded-lg text-xs font-bold bg-orange-500 text-white transition-all">USD ($)</button>
-        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all">GBP (£)</button>
-        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all">EUR (€)</button>
+      <div class="flex items-center gap-1.5 bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800">
+        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-bold bg-neutral-800 text-white transition-all shadow-md">USD ($)</button>
+        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
+        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
       </div>
-    </div>
+    </header>
 
-    <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Left: Form Controls (7 Columns) -->
-      <div class="lg:col-span-7 space-y-6">
+      <section class="lg:col-span-7 space-y-6">
         
-        <!-- Pricing Inputs -->
+        <div class="card-stealth rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.05">
+          <h2 class="text-xs uppercase tracking-widest font-bold text-neutral-400 heading-font">01 / Pricing & Shipping</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-neutral-300">Listing Retail Price (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemPrice" value="150" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-bold text-lg">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-neutral-300">Shipping Charged to Buyer (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCharge" value="0" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-bold text-lg">
+            </div>
+          </div>
+        </div>
+
+        <div class="card-stealth rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.05">
+          <h2 class="text-xs uppercase tracking-widest font-bold text-neutral-400 heading-font">02 / Manufacturing & Logistics</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-neutral-300">Material Cost (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemCost" value="35" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-neutral-300">Actual Shipping (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCost" value="22" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-medium text-neutral-300">Packaging/Overhead (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="overheadCost" value="8" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-semibold">
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Listing Price (<span class="currency-symbol">$</span>)</label>
-            <input type="number" id="itemPrice" value="150" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Buyer Shipping Fee (<span class="currency-symbol">$</span>)</label>
-            <input type="number" id="shipCharge" value="0" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
-          </div>
-        </div>
-
-        <!-- Production Costs -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Item Cost (<span class="currency-symbol">$</span>)</label>
-            <input type="number" id="itemCost" value="35" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Shipping Cost (<span class="currency-symbol">$</span>)</label>
-            <input type="number" id="shipCost" value="22" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
-          </div>
-          <div class="space-y-1">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Packing/Labor (<span class="currency-symbol">$</span>)</label>
-            <input type="number" id="overheadCost" value="8" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
-          </div>
-        </div>
-
-        <!-- Toggles Section -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <label class="card-3d flex items-center justify-between p-3.5 rounded-xl cursor-pointer">
+          <label class="card-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
-              <p class="text-sm font-semibold text-slate-200">Offsite Ads Fee</p>
-              <p class="text-[11px] text-slate-400">15% on total order</p>
+              <p class="text-sm font-semibold text-white">Offsite Ads (15%)</p>
+              <p class="text-xs text-neutral-400">Apply Etsy offsite campaign fee</p>
             </div>
             <input type="checkbox" id="offsiteAds" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
 
-          <label class="card-3d flex items-center justify-between p-3.5 rounded-xl cursor-pointer">
+          <label class="card-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
-              <p class="text-sm font-semibold text-slate-200">Etsy Plus Plan</p>
-              <p class="text-[11px] text-slate-400">Includes free monthly credits</p>
+              <p class="text-sm font-semibold text-white">Etsy Plus Perks</p>
+              <p class="text-xs text-neutral-400">Waives individual listing fee</p>
             </div>
             <input type="checkbox" id="etsyPlus" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
         </div>
 
-        <!-- Reverse Profit Goal Feature -->
-        <div class="card-3d p-4 rounded-2xl bg-orange-500/5 border-orange-500/20 space-y-3">
+        <div class="card-stealth rounded-3xl p-5 space-y-3 border-orange-500/20">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">🎯 Reverse Price Target</span>
-            <span class="text-[11px] text-slate-400">Find needed selling price</span>
+            <span class="text-xs uppercase font-bold text-orange-400 heading-font tracking-wider">🎯 Reverse Target Solver</span>
+            <span class="text-xs text-neutral-400">Calculate ideal selling price</span>
           </div>
           <div class="flex gap-3">
-            <input type="number" id="targetProfit" placeholder="Desired Net Profit ($)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
-            <button onclick="calculateTargetPrice()" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shrink-0 transition-all">Calculate</button>
+            <input type="number" id="targetProfit" placeholder="Target Net Profit ($)" class="input-stealth w-full rounded-2xl px-4 py-2.5 text-sm text-white">
+            <button onclick="calculateTargetPrice()" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold rounded-2xl text-xs transition-all shrink-0">Solve Price</button>
           </div>
-          <p id="targetResult" class="text-xs font-medium text-slate-300 hidden"></p>
+          <p id="targetResult" class="text-xs text-neutral-300 hidden"></p>
         </div>
 
-      </div>
+      </section>
 
-      <!-- Right: Live Metrics & Visuals (5 Columns) -->
-      <div class="lg:col-span-5 space-y-4">
+      <section class="lg:col-span-5 space-y-6">
         
-        <!-- Net Profit Card -->
-        <div class="card-3d p-6 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-slate-900/60 to-transparent border-emerald-500/40">
-          <span class="text-xs uppercase font-extrabold tracking-wider text-emerald-400">Net Estimated Profit</span>
-          <div class="flex items-baseline gap-2 mt-1">
-            <span class="text-4xl md:text-5xl font-black text-emerald-400" id="netProfit">$0.00</span>
-            <span class="text-xs font-bold text-emerald-300/80" id="marginDisplay">(0%)</span>
+        <div class="card-stealth glow-green rounded-3xl p-6 md:p-8 space-y-4 border-emerald-500/30" data-tilt data-tilt-max="7" data-tilt-glare data-tilt-max-glare="0.1">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 heading-font">Net Realized Profit</span>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold" id="marginDisplay">0% Margin</span>
           </div>
-          <div class="mt-3 flex justify-between text-xs text-slate-400 border-t border-emerald-500/20 pt-2">
-            <span>Total Revenue: <b class="text-white" id="totalRev">$0.00</b></span>
-            <span>Total Overhead: <b class="text-rose-400" id="totalExp">$0.00</b></span>
+          
+          <div class="text-5xl md:text-6xl font-black heading-font text-white tracking-tight" id="netProfit">
+            $0.00
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-800 text-xs">
+            <div>
+              <p class="text-neutral-400">Gross Revenue</p>
+              <p class="text-base font-bold text-white mt-0.5" id="totalRev">$0.00</p>
+            </div>
+            <div>
+              <p class="text-neutral-400">Total Deductions</p>
+              <p class="text-base font-bold text-rose-400 mt-0.5" id="totalExp">$0.00</p>
+            </div>
           </div>
         </div>
 
-        <!-- Fee Breakdown Grid -->
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <div class="card-3d p-3 rounded-xl">
-            <p class="text-slate-400">Listing Fee</p>
-            <p class="font-bold text-slate-200 mt-0.5" id="feeListing">$0.20</p>
+        <div class="card-stealth rounded-3xl p-6 space-y-3 text-xs">
+          <div class="flex justify-between pb-2 border-b border-neutral-800">
+            <span class="text-neutral-400">Listing Fee</span>
+            <span class="font-bold text-neutral-200" id="feeListing">$0.20</span>
           </div>
-          <div class="card-3d p-3 rounded-xl">
-            <p class="text-slate-400">Transaction (6.5%)</p>
-            <p class="font-bold text-slate-200 mt-0.5" id="feeTx">$0.00</p>
+          <div class="flex justify-between pb-2 border-b border-neutral-800">
+            <span class="text-neutral-400">Transaction Fee (6.5%)</span>
+            <span class="font-bold text-neutral-200" id="feeTx">$0.00</span>
           </div>
-          <div class="card-3d p-3 rounded-xl">
-            <p class="text-slate-400">Processing (3%+$0.25)</p>
-            <p class="font-bold text-slate-200 mt-0.5" id="feeProc">$0.00</p>
+          <div class="flex justify-between pb-2 border-b border-neutral-800">
+            <span class="text-neutral-400">Payment Gateway (3% + $0.25)</span>
+            <span class="font-bold text-neutral-200" id="feeProc">$0.00</span>
           </div>
-          <div class="card-3d p-3 rounded-xl">
-            <p class="text-slate-400">Total Etsy Cut</p>
-            <p class="font-bold text-rose-400 mt-0.5" id="totalEtsyFees">$0.00</p>
+          <div class="flex justify-between font-bold text-rose-400 pt-1">
+            <span>Total Etsy Cut</span>
+            <span id="totalEtsyFees">$0.00</span>
           </div>
         </div>
 
-        <!-- Doughnut Chart Breakdown -->
-        <div class="card-3d p-4 rounded-2xl flex items-center justify-center h-44">
+        <div class="card-stealth rounded-3xl p-5 flex items-center justify-center h-48 relative">
           <canvas id="profitChart"></canvas>
         </div>
 
-        <!-- CSV Export Button -->
-        <button onclick="exportCSV()" class="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-300 font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2">
-          <span>📥 Download Summary (.CSV)</span>
+        <button onclick="exportCSV()" class="w-full py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 hover:border-neutral-700 text-neutral-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+          <span>⚡ Export CSV Summary</span>
         </button>
 
-      </div>
+      </section>
+
     </div>
-  </div>
+  </main>
 
   <script>
     let activeCurrency = '$';
@@ -193,9 +217,9 @@
       document.querySelectorAll('.currency-symbol').forEach(el => el.innerText = symbol);
       
       ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
-        document.getElementById(id).className = 'px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all';
+        document.getElementById(id).className = 'px-4 py-2 rounded-xl text-xs font-bold text-neutral-400 hover:text-white transition-all';
       });
-      document.getElementById('curr' + code).className = 'px-3 py-1 rounded-lg text-xs font-bold bg-orange-500 text-white transition-all';
+      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-bold bg-neutral-800 text-white transition-all shadow-md';
       
       calculate();
     }
@@ -211,7 +235,6 @@
 
       const revenue = price + shipCharge;
       
-      // Fees logic
       const listingFee = etsyPlus ? 0.00 : (revenue > 0 ? 0.20 : 0.00);
       const txFee = revenue * 0.065;
       const procFee = revenue > 0 ? (revenue * 0.03) + 0.25 : 0.00;
@@ -223,9 +246,8 @@
       const netProfit = revenue - totalExpenses;
       const margin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
 
-      // Updating UI
       document.getElementById('netProfit').innerText = `${activeCurrency}${netProfit.toFixed(2)}`;
-      document.getElementById('marginDisplay').innerText = `(${margin.toFixed(1)}% Margin)`;
+      document.getElementById('marginDisplay').innerText = `${margin.toFixed(1)}% Margin`;
       document.getElementById('totalRev').innerText = `${activeCurrency}${revenue.toFixed(2)}`;
       document.getElementById('totalExp').innerText = `${activeCurrency}${totalExpenses.toFixed(2)}`;
       document.getElementById('feeListing').innerText = `${activeCurrency}${listingFee.toFixed(2)}`;
@@ -243,20 +265,21 @@
       chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Production/Ship', 'Etsy Fees', 'Net Profit'],
+          labels: ['Overhead & Production', 'Etsy Fees', 'Net Realized Profit'],
           datasets: [{
             data: [costs, fees, profit],
-            backgroundColor: ['#64748b', '#f43f5e', '#10b981'],
-            borderWidth: 0
+            backgroundColor: ['#404040', '#f43f5e', '#10b981'],
+            borderWidth: 0,
+            hoverOffset: 4
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'right', labels: { boxWidth: 10, color: '#94a3b8', font: { size: 10 } } }
+            legend: { position: 'right', labels: { boxWidth: 10, color: '#a3a3a3', font: { size: 10 } } }
           },
-          cutout: '70%'
+          cutout: '75%'
         }
       });
     }
@@ -277,7 +300,7 @@
       
       const resElem = document.getElementById('targetResult');
       resElem.classList.remove('hidden');
-      resElem.innerHTML = `To clear <b>${activeCurrency}${target.toFixed(2)}</b> profit, list item at: <span class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</span>`;
+      resElem.innerHTML = `To clear <b>${activeCurrency}${target.toFixed(2)}</b>, list at: <span class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</span>`;
     }
 
     function exportCSV() {
@@ -289,7 +312,7 @@
 
       const csvContent = "data:text/csv;charset=utf-8," + 
         "Metric,Value\n" + 
-        `Item Price,${p}\n` +
+        `Item Retail Price,${p}\n` +
         `Total Revenue,${rev}\n` +
         `Total Fees,${fee}\n` +
         `Net Profit,${profit}\n` +
@@ -298,7 +321,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "etsy_profit_breakdown.csv");
+      link.setAttribute("download", "etsy_profit_matrix.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -309,6 +332,7 @@
       document.getElementById(id).addEventListener('change', calculate);
     });
 
+    // Initialize
     calculate();
   </script>
 </body>
