@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEER FORGE | Etsy Profit Engine by Habib Naseer</title>
+  <title>Etsy Profit & Fee Calculator | Seer Forge by Habib Naseer</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -24,7 +24,7 @@
     }
     .font-brand {
       font-family: 'Cinzel', serif;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
@@ -32,46 +32,44 @@
     #canvas-container {
       position: fixed;
       top: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: 0;
       pointer-events: none;
     }
-    @media (min-width: 1024px) {
-      #canvas-container {
-        width: 50%;
-      }
-    }
     .stealth-card {
-      background: rgba(10, 10, 10, 0.55);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(8, 8, 8, 0.65);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
       border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .stealth-card:hover {
-      border-color: rgba(249, 115, 22, 0.4);
-      box-shadow: 0 0 35px rgba(249, 115, 22, 0.15);
+      border-color: rgba(249, 115, 22, 0.45);
+      box-shadow: 0 0 35px rgba(249, 115, 22, 0.2);
     }
     .stealth-input {
-      background: rgba(16, 16, 16, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(14, 14, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       transition: all 0.2s ease;
     }
     .stealth-input:focus {
       border-color: #f97316;
-      background: rgba(24, 24, 24, 0.95);
-      box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+      background: rgba(22, 22, 22, 0.95);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
       outline: none;
     }
-    .metallic-title {
-      background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
+    .gold-metallic {
+      background: linear-gradient(135deg, #ffffff 0%, #d4d4d4 50%, #f97316 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
+      color: transparent;
     }
-    .flame-glow {
-      box-shadow: 0 0 40px rgba(249, 115, 22, 0.2);
+    .glow-amber {
+      box-shadow: 0 0 45px rgba(249, 115, 22, 0.25);
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
@@ -82,58 +80,56 @@
 </head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-orange-500 selection:text-white">
 
-  <!-- 3D WebGL Forge Canvas -->
   <div id="canvas-container">
     <canvas id="webgl-canvas" class="w-full h-full"></canvas>
   </div>
 
-  <!-- Main Container -->
-  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-8 md:py-10 flex-1 flex flex-col justify-between">
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-between">
     
-    <!-- Top Branding Bar -->
     <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-neutral-900">
       
-      <!-- Creator & Brand Identity -->
-      <div class="space-y-1.5">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-400 text-[11px] font-mono uppercase tracking-widest">
-          <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-          <span>CRAFTED BY DEER EDGE // SEER FORGE</span>
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-400 text-xs font-mono uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+          <span>ENTERPRISE ETSY ANALYTICS ENGINE // V4.0</span>
         </div>
         
-        <!-- HABIB NASEER Signature Typography -->
-        <h1 class="text-3xl sm:text-5xl font-black font-brand tracking-wider uppercase metallic-title">
-          HABIB NASEER
+        <h1 class="text-3xl sm:text-5xl font-black font-mono tracking-tight uppercase gold-metallic">
+          ETSY PROFIT & FEE CALCULATOR
         </h1>
-        
-        <p class="text-xs sm:text-sm text-neutral-400 font-mono flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5">
-          <span>Brand: <b class="text-orange-400 uppercase tracking-wider">Seer Forge</b></span>
+
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm font-mono text-neutral-400 pt-1">
+          <span>DEVELOPED BY <b class="text-white font-brand tracking-wider uppercase text-base">HABIB NASEER</b></span>
           <span class="text-neutral-700">•</span>
-          <span>Company: <b class="text-neutral-200">Deer Edge</b></span>
+          <span>BRAND: <b class="text-orange-400">SEER FORGE</b></span>
           <span class="text-neutral-700">•</span>
-          <span>Contact: <a href="mailto:x10deeredge@gmail.com" class="text-neutral-400 hover:text-orange-400 underline transition-colors">x10deeredge@gmail.com</a></span>
-        </p>
+          <span>COMPANY: <b class="text-neutral-300">DEER EDGE</b></span>
+        </div>
       </div>
 
-      <!-- Currency Switcher -->
-      <div class="flex items-center bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800 backdrop-blur-md">
-        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-lg shadow-orange-500/20">USD ($)</button>
-        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
-        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="https://www.etsy.com" target="_blank" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2">
+          <span>VISIT SEER FORGE STORE</span>
+          <span>↗</span>
+        </a>
+
+        <div class="flex items-center bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800">
+          <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all">USD ($)</button>
+          <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
+          <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Workspace -->
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-8 items-center">
       
-      <!-- Left: Inputs (6 Cols) -->
       <section class="lg:col-span-6 space-y-5">
         
-        <!-- Pricing Matrix -->
         <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
-          <span class="text-xs font-mono text-orange-400 uppercase tracking-widest font-bold">// 01: RETAIL & SHIPPING CHARGE</span>
+          <span class="text-xs font-mono text-orange-400 uppercase tracking-widest font-bold">// 01: LISTING & REVENUE PARAMETERS</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-xs font-mono text-neutral-400">Selling Price (<span class="currency-symbol">$</span>)</label>
+              <label class="text-xs font-mono text-neutral-400">Item Selling Price (<span class="currency-symbol">$</span>)</label>
               <input type="number" id="itemPrice" value="160" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-bold text-lg">
             </div>
             <div class="space-y-1.5">
@@ -143,27 +139,25 @@
           </div>
         </div>
 
-        <!-- Overheads (Without Labor) -->
         <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
-          <span class="text-xs font-mono text-neutral-300 uppercase tracking-widest font-bold">// 02: FORGE COST & POSTAGE</span>
+          <span class="text-xs font-mono text-neutral-300 uppercase tracking-widest font-bold">// 02: FORGE PRODUCTION & LOGISTICS COSTS</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-xs font-mono text-neutral-400">Material / Production (<span class="currency-symbol">$</span>)</label>
+              <label class="text-xs font-mono text-neutral-400">Item Production Cost (<span class="currency-symbol">$</span>)</label>
               <input type="number" id="itemCost" value="45" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
             </div>
             <div class="space-y-1.5">
-              <label class="text-xs font-mono text-neutral-400">Actual Shipping Cost (<span class="currency-symbol">$</span>)</label>
+              <label class="text-xs font-mono text-neutral-400">Actual Courier / Shipping (<span class="currency-symbol">$</span>)</label>
               <input type="number" id="shipCost" value="25" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
             </div>
           </div>
         </div>
 
-        <!-- Toggles -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label class="stealth-card rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
               <p class="text-sm font-bold text-white">Offsite Ads (15%)</p>
-              <p class="text-[11px] font-mono text-neutral-500">Attributed sales cut</p>
+              <p class="text-[11px] font-mono text-neutral-500">Attributed sales fee</p>
             </div>
             <input type="checkbox" id="offsiteAds" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
@@ -171,16 +165,15 @@
           <label class="stealth-card rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
               <p class="text-sm font-bold text-white">Etsy Plus Plan</p>
-              <p class="text-[11px] font-mono text-neutral-500">Zero individual listing fee</p>
+              <p class="text-[11px] font-mono text-neutral-500">Waives listing fee</p>
             </div>
             <input type="checkbox" id="etsyPlus" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
         </div>
 
-        <!-- Reverse Target Solver -->
         <div class="stealth-card rounded-3xl p-5 space-y-3 border-orange-500/20">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase text-orange-400 font-bold">🎯 TARGET PROFIT SOLVER</span>
+            <span class="text-xs font-mono uppercase text-orange-400 font-bold">🎯 TARGET PROFIT REVERSE SOLVER</span>
           </div>
           <div class="flex gap-2">
             <input type="number" id="targetProfit" placeholder="Desired Net Profit ($)" class="stealth-input w-full rounded-2xl px-4 py-2.5 text-xs font-mono text-white">
@@ -191,11 +184,9 @@
 
       </section>
 
-      <!-- Right: Real-time Telemetry (6 Cols) -->
       <section class="lg:col-span-6 space-y-6">
         
-        <!-- Net Realized Profit (Flame Amber Theme - Zero Green) -->
-        <div class="stealth-card flame-glow rounded-[2.5rem] p-8 md:p-10 space-y-6 border-orange-500/30 relative overflow-hidden" data-tilt data-tilt-max="4">
+        <div class="stealth-card glow-amber rounded-[2.5rem] p-8 md:p-10 space-y-6 border-orange-500/30 relative overflow-hidden" data-tilt data-tilt-max="3">
           <div class="flex justify-between items-center">
             <span class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">NET REALIZED PROFIT</span>
             <span class="text-xs px-3.5 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-200 font-mono font-bold" id="marginDisplay">0% MARGIN</span>
@@ -211,13 +202,12 @@
               <p class="text-xl font-bold text-white mt-1" id="totalRev">$0.00</p>
             </div>
             <div>
-              <p class="text-neutral-500 uppercase">Total Expenses</p>
+              <p class="text-neutral-500 uppercase">Total Deductions</p>
               <p class="text-xl font-bold text-rose-400 mt-1" id="totalExp">$0.00</p>
             </div>
           </div>
         </div>
 
-        <!-- Telemetry Breakdown Grid -->
         <div class="stealth-card rounded-3xl p-6 font-mono text-xs space-y-3">
           <div class="flex justify-between pb-2 border-b border-neutral-900">
             <span class="text-neutral-400">Listing Fee</span>
@@ -241,84 +231,94 @@
 
     </main>
 
-    <!-- Footer HUD with Store Signature -->
     <footer class="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-neutral-500">
       <div>
-        <span>ENGINEERED BY <b class="text-neutral-300 font-brand">HABIB NASEER</b> // SEER FORGE • DEER EDGE</span>
+        <span>ENGINEERED BY <b class="text-white font-brand">HABIB NASEER</b> • <b class="text-orange-400">SEER FORGE</b> • <b class="text-neutral-300">DEER EDGE</b></span>
+        <span class="ml-2 text-neutral-600">(<a href="mailto:x10deeredge@gmail.com" class="hover:text-neutral-300 transition-colors">x10deeredge@gmail.com</a>)</span>
       </div>
       <button onclick="exportCSV()" class="hover:text-orange-400 text-neutral-400 transition-colors uppercase">📥 EXPORT METRICS (.CSV)</button>
     </footer>
 
   </div>
 
-  <!-- 3D Three.js Forge Core -->
   <script>
     const canvas = document.getElementById('webgl-canvas');
     const container = document.getElementById('canvas-container');
     
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
     function resize() {
-      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
     resize();
     window.addEventListener('resize', resize);
-    camera.position.z = 24;
+    camera.position.z = 32;
 
-    // 1. Damascus Damascus/Flame Geometric Core
-    const coreGeo = new THREE.IcosahedronGeometry(7, 2);
+    // 1. Massive 3,000 Particle Cosmos Engine
+    const pointGeo = new THREE.BufferGeometry();
+    const pointCount = 3000;
+    const pos = new Float32Array(pointCount * 3);
+    const colors = new Float32Array(pointCount * 3);
+
+    for(let i = 0; i < pointCount * 3; i += 3) {
+      pos[i] = (Math.random() - 0.5) * 160;
+      pos[i+1] = (Math.random() - 0.5) * 160;
+      pos[i+2] = (Math.random() - 0.5) * 160;
+
+      // Dark obsidian + ember gold particles
+      colors[i] = Math.random() > 0.3 ? 0.97 : 0.4;
+      colors[i+1] = Math.random() > 0.3 ? 0.45 : 0.4;
+      colors[i+2] = Math.random() > 0.3 ? 0.08 : 0.4;
+    }
+    pointGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    pointGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const pointMat = new THREE.PointsMaterial({
+      size: 0.6,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.7
+    });
+    const points = new THREE.Points(pointGeo, pointMat);
+    scene.add(points);
+
+    // 2. High-Poly 3D Damascus Forge Polyhedron
+    const coreGeo = new THREE.IcosahedronGeometry(11, 2);
     const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0a0a,
+      color: 0x050505,
       metalness: 0.95,
       roughness: 0.1,
       wireframe: true,
       wireframeLinewidth: 1.5
     });
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    coreMesh.position.set(18, 0, 0);
     scene.add(coreMesh);
 
-    // 2. Molten Steel Core Glow
-    const innerGeo = new THREE.SphereGeometry(3.8, 32, 32);
+    // 3. Inner Pulsing Core
+    const innerGeo = new THREE.SphereGeometry(6, 32, 32);
     const innerMat = new THREE.MeshBasicMaterial({
       color: 0xf97316,
       wireframe: true,
       transparent: true,
-      opacity: 0.25
+      opacity: 0.2
     });
     const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+    innerMesh.position.set(18, 0, 0);
     scene.add(innerMesh);
 
-    // 3. Floating Forge Particles
-    const pointGeo = new THREE.BufferGeometry();
-    const pointCount = 600;
-    const pos = new Float32Array(pointCount * 3);
-    for(let i=0; i<pointCount*3; i+=3) {
-      pos[i] = (Math.random() - 0.5) * 38;
-      pos[i+1] = (Math.random() - 0.5) * 38;
-      pos[i+2] = (Math.random() - 0.5) * 38;
-    }
-    pointGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const pointMat = new THREE.PointsMaterial({
-      size: 0.22,
-      color: 0xf97316,
-      transparent: true,
-      opacity: 0.6
-    });
-    const points = new THREE.Points(pointGeo, pointMat);
-    scene.add(points);
-
-    // Forge Flame Lighting
-    const light1 = new THREE.PointLight(0xf97316, 6, 60);
-    light1.position.set(10, 10, 15);
+    // Dynamic Multi-Angle Lights
+    const light1 = new THREE.PointLight(0xf97316, 8, 80);
+    light1.position.set(20, 20, 20);
     scene.add(light1);
 
-    const light2 = new THREE.PointLight(0xffedd5, 2, 40);
-    light2.position.set(-10, -10, 10);
+    const light2 = new THREE.PointLight(0xffffff, 2, 60);
+    light2.position.set(-20, -20, 10);
     scene.add(light2);
 
     let mouseX = 0, mouseY = 0;
@@ -330,22 +330,24 @@
     function animate() {
       requestAnimationFrame(animate);
 
-      coreMesh.rotation.x += 0.003;
-      coreMesh.rotation.y += 0.005;
+      coreMesh.rotation.x += 0.002;
+      coreMesh.rotation.y += 0.004;
       
-      innerMesh.rotation.x -= 0.002;
-      innerMesh.rotation.y -= 0.004;
+      innerMesh.rotation.x -= 0.001;
+      innerMesh.rotation.y -= 0.003;
 
-      points.rotation.y += 0.0008;
+      points.rotation.y += 0.0005;
+      points.rotation.x += 0.0002;
 
-      coreMesh.position.x += (mouseX * 2 - coreMesh.position.x) * 0.05;
-      coreMesh.position.y += (-mouseY * 2 - coreMesh.position.y) * 0.05;
+      camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+      camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
     }
     animate();
 
-    /* ================= CALCULATOR ENGINE ================= */
+    /* ================= ENGINE CALCULATIONS ================= */
     let activeCurrency = '$';
     const inputIds = ['itemPrice', 'shipCharge', 'itemCost', 'shipCost', 'offsiteAds', 'etsyPlus'];
 
@@ -354,9 +356,9 @@
       document.querySelectorAll('.currency-symbol').forEach(el => el.innerText = symbol);
       
       ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
-        document.getElementById(id).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all';
+        document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all';
       });
-      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-lg shadow-orange-500/20';
+      document.getElementById('curr' + code).className = 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all';
       
       calculate();
     }
@@ -431,7 +433,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "seer_forge_order_metrics.csv");
+      link.setAttribute("download", "seer_forge_analytics.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
