@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Etsy Pro Analytics & Profit Engine 3D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #1e1b4b 0%, #090d16 50%, #020617 100%);
+      min-height: 100vh;
+    }
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+    .card-3d {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-3d:hover {
+      transform: translateY(-3px);
+      border-color: rgba(249, 115, 22, 0.4);
+      box-shadow: 0 12px 24px -6px rgba(249, 115, 22, 0.15);
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="text-slate-100 p-4 md:p-8 flex justify-center items-center">
+
+  <div class="w-full max-w-6xl glass-panel rounded-3xl p-6 md:p-10 relative overflow-hidden my-auto">
+    <!-- Glow Effects -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Header & Currency Switcher -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-6 border-b border-slate-800">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold uppercase tracking-wider mb-2">
+          ⚡ Enterprise Seller Suite
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-white via-slate-200 to-orange-400 bg-clip-text text-transparent">
+          Etsy Fee & Profit Engine
+        </h1>
+      </div>
+
+      <!-- Currency Picker -->
+      <div class="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800">
+        <span class="text-xs text-slate-400 px-2 font-medium">Currency:</span>
+        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-3 py-1 rounded-lg text-xs font-bold bg-orange-500 text-white transition-all">USD ($)</button>
+        <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all">GBP (£)</button>
+        <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all">EUR (€)</button>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left: Form Controls (7 Columns) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Pricing Inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Listing Price (<span class="currency-symbol">$</span>)</label>
+            <input type="number" id="itemPrice" value="150" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Buyer Shipping Fee (<span class="currency-symbol">$</span>)</label>
+            <input type="number" id="shipCharge" value="0" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Production Costs -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Item Cost (<span class="currency-symbol">$</span>)</label>
+            <input type="number" id="itemCost" value="35" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Shipping Cost (<span class="currency-symbol">$</span>)</label>
+            <input type="number" id="shipCost" value="22" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Packing/Labor (<span class="currency-symbol">$</span>)</label>
+            <input type="number" id="overheadCost" value="8" class="w-full bg-slate-900/70 border border-slate-700/70 rounded-xl px-4 py-2.5 text-white font-semibold focus:border-orange-500 focus:outline-none transition-all">
+          </div>
+        </div>
+
+        <!-- Toggles Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <label class="card-3d flex items-center justify-between p-3.5 rounded-xl cursor-pointer">
+            <div>
+              <p class="text-sm font-semibold text-slate-200">Offsite Ads Fee</p>
+              <p class="text-[11px] text-slate-400">15% on total order</p>
+            </div>
+            <input type="checkbox" id="offsiteAds" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
+          </label>
+
+          <label class="card-3d flex items-center justify-between p-3.5 rounded-xl cursor-pointer">
+            <div>
+              <p class="text-sm font-semibold text-slate-200">Etsy Plus Plan</p>
+              <p class="text-[11px] text-slate-400">Includes free monthly credits</p>
+            </div>
+            <input type="checkbox" id="etsyPlus" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
+          </label>
+        </div>
+
+        <!-- Reverse Profit Goal Feature -->
+        <div class="card-3d p-4 rounded-2xl bg-orange-500/5 border-orange-500/20 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">🎯 Reverse Price Target</span>
+            <span class="text-[11px] text-slate-400">Find needed selling price</span>
+          </div>
+          <div class="flex gap-3">
+            <input type="number" id="targetProfit" placeholder="Desired Net Profit ($)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
+            <button onclick="calculateTargetPrice()" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shrink-0 transition-all">Calculate</button>
+          </div>
+          <p id="targetResult" class="text-xs font-medium text-slate-300 hidden"></p>
+        </div>
+
+      </div>
+
+      <!-- Right: Live Metrics & Visuals (5 Columns) -->
+      <div class="lg:col-span-5 space-y-4">
+        
+        <!-- Net Profit Card -->
+        <div class="card-3d p-6 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-slate-900/60 to-transparent border-emerald-500/40">
+          <span class="text-xs uppercase font-extrabold tracking-wider text-emerald-400">Net Estimated Profit</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="text-4xl md:text-5xl font-black text-emerald-400" id="netProfit">$0.00</span>
+            <span class="text-xs font-bold text-emerald-300/80" id="marginDisplay">(0%)</span>
+          </div>
+          <div class="mt-3 flex justify-between text-xs text-slate-400 border-t border-emerald-500/20 pt-2">
+            <span>Total Revenue: <b class="text-white" id="totalRev">$0.00</b></span>
+            <span>Total Overhead: <b class="text-rose-400" id="totalExp">$0.00</b></span>
+          </div>
+        </div>
+
+        <!-- Fee Breakdown Grid -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="card-3d p-3 rounded-xl">
+            <p class="text-slate-400">Listing Fee</p>
+            <p class="font-bold text-slate-200 mt-0.5" id="feeListing">$0.20</p>
+          </div>
+          <div class="card-3d p-3 rounded-xl">
+            <p class="text-slate-400">Transaction (6.5%)</p>
+            <p class="font-bold text-slate-200 mt-0.5" id="feeTx">$0.00</p>
+          </div>
+          <div class="card-3d p-3 rounded-xl">
+            <p class="text-slate-400">Processing (3%+$0.25)</p>
+            <p class="font-bold text-slate-200 mt-0.5" id="feeProc">$0.00</p>
+          </div>
+          <div class="card-3d p-3 rounded-xl">
+            <p class="text-slate-400">Total Etsy Cut</p>
+            <p class="font-bold text-rose-400 mt-0.5" id="totalEtsyFees">$0.00</p>
+          </div>
+        </div>
+
+        <!-- Doughnut Chart Breakdown -->
+        <div class="card-3d p-4 rounded-2xl flex items-center justify-center h-44">
+          <canvas id="profitChart"></canvas>
+        </div>
+
+        <!-- CSV Export Button -->
+        <button onclick="exportCSV()" class="w-full py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-300 font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2">
+          <span>📥 Download Summary (.CSV)</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeCurrency = '$';
+    let chartInstance = null;
+
+    const inputIds = ['itemPrice', 'shipCharge', 'itemCost', 'shipCost', 'overheadCost', 'offsiteAds', 'etsyPlus'];
+
+    function setCurrency(symbol, code) {
+      activeCurrency = symbol;
+      document.querySelectorAll('.currency-symbol').forEach(el => el.innerText = symbol);
+      
+      ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
+        document.getElementById(id).className = 'px-3 py-1 rounded-lg text-xs font-bold bg-transparent text-slate-400 hover:text-white transition-all';
+      });
+      document.getElementById('curr' + code).className = 'px-3 py-1 rounded-lg text-xs font-bold bg-orange-500 text-white transition-all';
+      
+      calculate();
+    }
+
+    function calculate() {
+      const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+      const shipCharge = parseFloat(document.getElementById('shipCharge').value) || 0;
+      const itemCost = parseFloat(document.getElementById('itemCost').value) || 0;
+      const shipCost = parseFloat(document.getElementById('shipCost').value) || 0;
+      const overhead = parseFloat(document.getElementById('overheadCost').value) || 0;
+      const adsChecked = document.getElementById('offsiteAds').checked;
+      const etsyPlus = document.getElementById('etsyPlus').checked;
+
+      const revenue = price + shipCharge;
+      
+      // Fees logic
+      const listingFee = etsyPlus ? 0.00 : (revenue > 0 ? 0.20 : 0.00);
+      const txFee = revenue * 0.065;
+      const procFee = revenue > 0 ? (revenue * 0.03) + 0.25 : 0.00;
+      const adsFee = adsChecked ? revenue * 0.15 : 0.00;
+
+      const totalFees = listingFee + txFee + procFee + adsFee;
+      const productionCosts = itemCost + shipCost + overhead;
+      const totalExpenses = productionCosts + totalFees;
+      const netProfit = revenue - totalExpenses;
+      const margin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+
+      // Updating UI
+      document.getElementById('netProfit').innerText = `${activeCurrency}${netProfit.toFixed(2)}`;
+      document.getElementById('marginDisplay').innerText = `(${margin.toFixed(1)}% Margin)`;
+      document.getElementById('totalRev').innerText = `${activeCurrency}${revenue.toFixed(2)}`;
+      document.getElementById('totalExp').innerText = `${activeCurrency}${totalExpenses.toFixed(2)}`;
+      document.getElementById('feeListing').innerText = `${activeCurrency}${listingFee.toFixed(2)}`;
+      document.getElementById('feeTx').innerText = `${activeCurrency}${txFee.toFixed(2)}`;
+      document.getElementById('feeProc').innerText = `${activeCurrency}${procFee.toFixed(2)}`;
+      document.getElementById('totalEtsyFees').innerText = `${activeCurrency}${totalFees.toFixed(2)}`;
+
+      updateChart(productionCosts, totalFees, Math.max(0, netProfit));
+    }
+
+    function updateChart(costs, fees, profit) {
+      const ctx = document.getElementById('profitChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Production/Ship', 'Etsy Fees', 'Net Profit'],
+          datasets: [{
+            data: [costs, fees, profit],
+            backgroundColor: ['#64748b', '#f43f5e', '#10b981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { boxWidth: 10, color: '#94a3b8', font: { size: 10 } } }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function calculateTargetPrice() {
+      const target = parseFloat(document.getElementById('targetProfit').value);
+      if (!target || target <= 0) return;
+
+      const itemCost = parseFloat(document.getElementById('itemCost').value) || 0;
+      const shipCost = parseFloat(document.getElementById('shipCost').value) || 0;
+      const overhead = parseFloat(document.getElementById('overheadCost').value) || 0;
+      const adsChecked = document.getElementById('offsiteAds').checked;
+      
+      const fixedOverhead = itemCost + shipCost + overhead + 0.20 + 0.25;
+      const variableFeePercent = 0.065 + 0.03 + (adsChecked ? 0.15 : 0.0);
+      
+      const requiredPrice = (target + fixedOverhead) / (1 - variableFeePercent);
+      
+      const resElem = document.getElementById('targetResult');
+      resElem.classList.remove('hidden');
+      resElem.innerHTML = `To clear <b>${activeCurrency}${target.toFixed(2)}</b> profit, list item at: <span class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</span>`;
+    }
+
+    function exportCSV() {
+      const p = document.getElementById('itemPrice').value;
+      const rev = document.getElementById('totalRev').innerText;
+      const fee = document.getElementById('totalEtsyFees').innerText;
+      const profit = document.getElementById('netProfit').innerText;
+      const margin = document.getElementById('marginDisplay').innerText;
+
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "Metric,Value\n" + 
+        `Item Price,${p}\n` +
+        `Total Revenue,${rev}\n` +
+        `Total Fees,${fee}\n` +
+        `Net Profit,${profit}\n` +
+        `Margin,${margin}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "etsy_profit_breakdown.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    inputIds.forEach(id => {
+      document.getElementById(id).addEventListener('input', calculate);
+      document.getElementById(id).addEventListener('change', calculate);
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
