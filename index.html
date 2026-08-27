@@ -24,7 +24,7 @@
     }
     .font-brand {
       font-family: 'Cinzel', serif;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
@@ -39,25 +39,26 @@
       pointer-events: none;
     }
     .stealth-card {
-      background: rgba(8, 8, 8, 0.65);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
+      background: rgba(8, 8, 8, 0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .stealth-card:hover {
-      border-color: rgba(249, 115, 22, 0.45);
+      border-color: rgba(249, 115, 22, 0.5);
+      background: rgba(12, 12, 12, 0.6);
       box-shadow: 0 0 35px rgba(249, 115, 22, 0.2);
     }
     .stealth-input {
-      background: rgba(14, 14, 14, 0.85);
+      background: rgba(14, 14, 14, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.12);
       transition: all 0.2s ease;
     }
     .stealth-input:focus {
       border-color: #f97316;
-      background: rgba(22, 22, 22, 0.95);
+      background: rgba(20, 20, 20, 0.9);
       box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
       outline: none;
     }
@@ -80,18 +81,22 @@
 </head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-orange-500 selection:text-white">
 
+  <!-- Massive WebGL 3D Interactive Canvas -->
   <div id="canvas-container">
     <canvas id="webgl-canvas" class="w-full h-full"></canvas>
   </div>
 
+  <!-- Content Layer -->
   <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-between">
     
-    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-neutral-900">
+    <!-- Top Header & Branding -->
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-neutral-900/80">
       
+      <!-- Brand Details -->
       <div class="space-y-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-400 text-xs font-mono uppercase tracking-widest">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950/80 border border-neutral-800 text-neutral-400 text-xs font-mono uppercase tracking-widest backdrop-blur-md">
           <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
-          <span>ENTERPRISE ETSY ANALYTICS ENGINE // V4.0</span>
+          <span>ENTERPRISE ETSY ANALYTICS ENGINE // V4.5 HEAVY 3D</span>
         </div>
         
         <h1 class="text-3xl sm:text-5xl font-black font-mono tracking-tight uppercase gold-metallic">
@@ -107,24 +112,30 @@
         </div>
       </div>
 
+      <!-- Actions & Currency -->
       <div class="flex flex-wrap items-center gap-3">
-        <a href="https://www.etsy.com" target="_blank" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2">
+        <!-- Direct Etsy Link to Seer Forge -->
+        <a href="https://seerforge.etsy.com" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/25 flex items-center gap-2">
           <span>VISIT SEER FORGE STORE</span>
           <span>↗</span>
         </a>
 
-        <div class="flex items-center bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800">
-          <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all">USD ($)</button>
+        <!-- Currency Switcher -->
+        <div class="flex items-center bg-neutral-950/80 p-1.5 rounded-2xl border border-neutral-800 backdrop-blur-md">
+          <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-md">USD ($)</button>
           <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
           <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
         </div>
       </div>
     </header>
 
+    <!-- Workspace -->
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-8 items-center">
       
+      <!-- Inputs (6 Columns) -->
       <section class="lg:col-span-6 space-y-5">
         
+        <!-- Pricing Matrix -->
         <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
           <span class="text-xs font-mono text-orange-400 uppercase tracking-widest font-bold">// 01: LISTING & REVENUE PARAMETERS</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -139,6 +150,7 @@
           </div>
         </div>
 
+        <!-- Overheads -->
         <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
           <span class="text-xs font-mono text-neutral-300 uppercase tracking-widest font-bold">// 02: FORGE PRODUCTION & LOGISTICS COSTS</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -153,6 +165,7 @@
           </div>
         </div>
 
+        <!-- Toggles -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label class="stealth-card rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
@@ -171,6 +184,7 @@
           </label>
         </div>
 
+        <!-- Target Solver -->
         <div class="stealth-card rounded-3xl p-5 space-y-3 border-orange-500/20">
           <div class="flex items-center justify-between">
             <span class="text-xs font-mono uppercase text-orange-400 font-bold">🎯 TARGET PROFIT REVERSE SOLVER</span>
@@ -184,8 +198,10 @@
 
       </section>
 
+      <!-- Right: Real-time Telemetry (6 Columns) -->
       <section class="lg:col-span-6 space-y-6">
         
+        <!-- Net Realized Profit Hero -->
         <div class="stealth-card glow-amber rounded-[2.5rem] p-8 md:p-10 space-y-6 border-orange-500/30 relative overflow-hidden" data-tilt data-tilt-max="3">
           <div class="flex justify-between items-center">
             <span class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">NET REALIZED PROFIT</span>
@@ -208,6 +224,7 @@
           </div>
         </div>
 
+        <!-- Telemetry Breakdown Grid -->
         <div class="stealth-card rounded-3xl p-6 font-mono text-xs space-y-3">
           <div class="flex justify-between pb-2 border-b border-neutral-900">
             <span class="text-neutral-400">Listing Fee</span>
@@ -231,6 +248,7 @@
 
     </main>
 
+    <!-- Footer HUD -->
     <footer class="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-neutral-500">
       <div>
         <span>ENGINEERED BY <b class="text-white font-brand">HABIB NASEER</b> • <b class="text-orange-400">SEER FORGE</b> • <b class="text-neutral-300">DEER EDGE</b></span>
@@ -241,10 +259,9 @@
 
   </div>
 
+  <!-- Heavy Multi-Geometry 3D WebGL Engine -->
   <script>
     const canvas = document.getElementById('webgl-canvas');
-    const container = document.getElementById('canvas-container');
-    
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
@@ -257,68 +274,105 @@
     }
     resize();
     window.addEventListener('resize', resize);
-    camera.position.z = 32;
+    camera.position.z = 35;
 
-    // 1. Massive 3,000 Particle Cosmos Engine
+    // 1. Particle Cloud (4,000 Forge Sparks)
     const pointGeo = new THREE.BufferGeometry();
-    const pointCount = 3000;
+    const pointCount = 4000;
     const pos = new Float32Array(pointCount * 3);
     const colors = new Float32Array(pointCount * 3);
 
     for(let i = 0; i < pointCount * 3; i += 3) {
-      pos[i] = (Math.random() - 0.5) * 160;
-      pos[i+1] = (Math.random() - 0.5) * 160;
-      pos[i+2] = (Math.random() - 0.5) * 160;
+      pos[i] = (Math.random() - 0.5) * 180;
+      pos[i+1] = (Math.random() - 0.5) * 180;
+      pos[i+2] = (Math.random() - 0.5) * 180;
 
-      // Dark obsidian + ember gold particles
-      colors[i] = Math.random() > 0.3 ? 0.97 : 0.4;
-      colors[i+1] = Math.random() > 0.3 ? 0.45 : 0.4;
-      colors[i+2] = Math.random() > 0.3 ? 0.08 : 0.4;
+      colors[i] = Math.random() > 0.4 ? 0.98 : 0.4;
+      colors[i+1] = Math.random() > 0.4 ? 0.48 : 0.2;
+      colors[i+2] = Math.random() > 0.4 ? 0.1 : 0.1;
     }
     pointGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     pointGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const pointMat = new THREE.PointsMaterial({
-      size: 0.6,
+      size: 0.55,
       vertexColors: true,
       transparent: true,
-      opacity: 0.7
+      opacity: 0.75
     });
     const points = new THREE.Points(pointGeo, pointMat);
     scene.add(points);
 
-    // 2. High-Poly 3D Damascus Forge Polyhedron
-    const coreGeo = new THREE.IcosahedronGeometry(11, 2);
+    // 2. High-Poly Damascus Wireframe Polyhedron
+    const coreGeo = new THREE.IcosahedronGeometry(10, 2);
     const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x050505,
+      color: 0x111111,
       metalness: 0.95,
       roughness: 0.1,
       wireframe: true,
       wireframeLinewidth: 1.5
     });
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    coreMesh.position.set(18, 0, 0);
+    coreMesh.position.set(16, 0, 0);
     scene.add(coreMesh);
 
-    // 3. Inner Pulsing Core
-    const innerGeo = new THREE.SphereGeometry(6, 32, 32);
+    // 3. Inner Molten Plasma Core
+    const innerGeo = new THREE.SphereGeometry(5.5, 32, 32);
     const innerMat = new THREE.MeshBasicMaterial({
       color: 0xf97316,
       wireframe: true,
       transparent: true,
-      opacity: 0.2
+      opacity: 0.22
     });
     const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    innerMesh.position.set(18, 0, 0);
+    innerMesh.position.set(16, 0, 0);
     scene.add(innerMesh);
 
-    // Dynamic Multi-Angle Lights
-    const light1 = new THREE.PointLight(0xf97316, 8, 80);
-    light1.position.set(20, 20, 20);
+    // 4. Orbiting Damascus Ring
+    const ringGeo = new THREE.TorusGeometry(14, 0.25, 16, 100);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xf59e0b,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.18
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.position.set(16, 0, 0);
+    scene.add(ringMesh);
+
+    // 5. Floating Obsidian Crystals (Multi-Geometry)
+    const crystals = [];
+    const crystalGeos = [
+      new THREE.OctahedronGeometry(2, 0),
+      new THREE.TetrahedronGeometry(2.5, 0),
+      new THREE.OctahedronGeometry(1.5, 0),
+      new THREE.DodecahedronGeometry(2, 0)
+    ];
+
+    for(let i = 0; i < 4; i++) {
+      const cMat = new THREE.MeshStandardMaterial({
+        color: 0x171717,
+        metalness: 0.9,
+        roughness: 0.2,
+        wireframe: true
+      });
+      const crystal = new THREE.Mesh(crystalGeos[i], cMat);
+      crystal.position.set(
+        16 + (Math.random() - 0.5) * 28,
+        (Math.random() - 0.5) * 24,
+        (Math.random() - 0.5) * 15
+      );
+      scene.add(crystal);
+      crystals.push(crystal);
+    }
+
+    // Dynamic Multi-Color Forge Lighting
+    const light1 = new THREE.PointLight(0xf97316, 9, 90);
+    light1.position.set(18, 15, 20);
     scene.add(light1);
 
-    const light2 = new THREE.PointLight(0xffffff, 2, 60);
-    light2.position.set(-20, -20, 10);
+    const light2 = new THREE.PointLight(0xffedd5, 3, 50);
+    light2.position.set(-15, -15, 10);
     scene.add(light2);
 
     let mouseX = 0, mouseY = 0;
@@ -336,18 +390,26 @@
       innerMesh.rotation.x -= 0.001;
       innerMesh.rotation.y -= 0.003;
 
-      points.rotation.y += 0.0005;
+      ringMesh.rotation.x += 0.003;
+      ringMesh.rotation.y += 0.002;
+
+      crystals.forEach((c, idx) => {
+        c.rotation.x += 0.004 * (idx + 1);
+        c.rotation.y += 0.003 * (idx + 1);
+      });
+
+      points.rotation.y += 0.0006;
       points.rotation.x += 0.0002;
 
-      camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+      camera.position.x += (mouseX * 6 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 6 - camera.position.y) * 0.05;
       camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
     }
     animate();
 
-    /* ================= ENGINE CALCULATIONS ================= */
+    /* ================= CALCULATOR STATE ENGINE ================= */
     let activeCurrency = '$';
     const inputIds = ['itemPrice', 'shipCharge', 'itemCost', 'shipCost', 'offsiteAds', 'etsyPlus'];
 
@@ -358,7 +420,7 @@
       ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
         document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all';
       });
-      document.getElementById('curr' + code).className = 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all';
+      document.getElementById('curr' + code).className = 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-md';
       
       calculate();
     }
@@ -424,6 +486,7 @@
         `Brand,Seer Forge\n` +
         `Company,Deer Edge\n` +
         `Creator,Habib Naseer\n` +
+        `Store,https://seerforge.etsy.com\n` +
         `Item Retail Price,${p}\n` +
         `Total Revenue,${rev}\n` +
         `Total Fees,${fee}\n` +
