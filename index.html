@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Etsy Apex 3D | Next-Gen Seller Matrix</title>
+  <title>SEER FORGE | Etsy Profit Engine by Habib Naseer</title>
   
-  <!-- Tailwind CSS, Three.js & Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -19,57 +17,61 @@
       padding: 0;
     }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #000000;
-      color: #f8fafc;
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
       overflow-x: hidden;
-      min-height: 100vh;
+    }
+    .font-brand {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.15em;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    .font-display {
-      font-family: 'Space Grotesk', sans-serif;
-    }
-    #webgl-bg {
+    #canvas-container {
       position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 1;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
       pointer-events: none;
     }
-    .glass-stealth {
-      background: rgba(10, 10, 12, 0.55);
+    @media (min-width: 1024px) {
+      #canvas-container {
+        width: 50%;
+      }
+    }
+    .stealth-card {
+      background: rgba(10, 10, 10, 0.55);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform-style: preserve-3d;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-stealth:hover {
-      border-color: rgba(249, 115, 22, 0.45);
-      box-shadow: 0 0 35px -5px rgba(249, 115, 22, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    .stealth-card:hover {
+      border-color: rgba(249, 115, 22, 0.4);
+      box-shadow: 0 0 35px rgba(249, 115, 22, 0.15);
     }
-    .input-stealth {
-      background: rgba(18, 18, 24, 0.7);
+    .stealth-input {
+      background: rgba(16, 16, 16, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s ease;
     }
-    .input-stealth:focus {
+    .stealth-input:focus {
       border-color: #f97316;
-      background: rgba(24, 24, 32, 0.95);
-      box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
+      background: rgba(24, 24, 24, 0.95);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
       outline: none;
     }
-    .neon-pulse {
-      animation: pulseGlow 3s infinite alternate;
+    .metallic-title {
+      background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.15); }
-      100% { box-shadow: 0 0 45px rgba(16, 185, 129, 0.35); }
+    .flame-glow {
+      box-shadow: 0 0 40px rgba(249, 115, 22, 0.2);
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
@@ -78,295 +80,274 @@
     }
   </style>
 </head>
-<body class="selection:bg-orange-500 selection:text-black relative">
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-orange-500 selection:text-white">
 
-  <!-- Three.js 3D Viewport Canvas -->
-  <canvas id="webgl-bg"></canvas>
+  <!-- 3D WebGL Forge Canvas -->
+  <div id="canvas-container">
+    <canvas id="webgl-canvas" class="w-full h-full"></canvas>
+  </div>
 
-  <!-- Foreground UI Layer -->
-  <div class="relative z-10 w-full min-h-screen flex flex-col justify-between p-4 sm:p-8 md:p-12 max-w-7xl mx-auto">
+  <!-- Main Container -->
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-8 md:py-10 flex-1 flex flex-col justify-between">
     
-    <!-- Top Bar Navigation -->
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-white/10">
-      <div class="space-y-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-orange-400 text-xs font-mono uppercase tracking-widest">
-          <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
-          <span>SPATIAL MATRIX • THREE.JS GPU</span>
+    <!-- Top Branding Bar -->
+    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-neutral-900">
+      
+      <!-- Creator & Brand Identity -->
+      <div class="space-y-1.5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-400 text-[11px] font-mono uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+          <span>CRAFTED BY DEER EDGE // SEER FORGE</span>
         </div>
-        <h1 class="text-3xl sm:text-5xl font-black font-display tracking-tight text-white flex items-center gap-3">
-          ETSY <span class="bg-gradient-to-r from-orange-400 via-amber-200 to-white bg-clip-text text-transparent">APEX 3D</span>
+        
+        <!-- HABIB NASEER Signature Typography -->
+        <h1 class="text-3xl sm:text-5xl font-black font-brand tracking-wider uppercase metallic-title">
+          HABIB NASEER
         </h1>
-        <p class="text-xs sm:text-sm text-neutral-400 max-w-md">Ultra-precision unit economics, dynamic profit solver & real-time fee simulation.</p>
+        
+        <p class="text-xs sm:text-sm text-neutral-400 font-mono flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5">
+          <span>Brand: <b class="text-orange-400 uppercase tracking-wider">Seer Forge</b></span>
+          <span class="text-neutral-700">•</span>
+          <span>Company: <b class="text-neutral-200">Deer Edge</b></span>
+          <span class="text-neutral-700">•</span>
+          <span>Contact: <a href="mailto:x10deeredge@gmail.com" class="text-neutral-400 hover:text-orange-400 underline transition-colors">x10deeredge@gmail.com</a></span>
+        </p>
       </div>
 
       <!-- Currency Switcher -->
-      <div class="flex items-center bg-black/60 p-1.5 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
-        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-black shadow-lg transition-all">USD ($)</button>
+      <div class="flex items-center bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800 backdrop-blur-md">
+        <button onclick="setCurrency('$', 'USD')" id="currUSD" class="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-lg shadow-orange-500/20">USD ($)</button>
         <button onclick="setCurrency('£', 'GBP')" id="currGBP" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">GBP (£)</button>
         <button onclick="setCurrency('€', 'EUR')" id="currEUR" class="px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all">EUR (€)</button>
       </div>
     </header>
 
-    <!-- Main Spatial Dashboard -->
-    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-8 items-start">
+    <!-- Main Workspace -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-8 items-center">
       
-      <!-- Left Column: Input Nodes (7 Cols) -->
-      <section class="lg:col-span-7 space-y-6">
+      <!-- Left: Inputs (6 Cols) -->
+      <section class="lg:col-span-6 space-y-5">
         
-        <!-- Pricing Node -->
-        <div class="glass-stealth rounded-3xl p-6 sm:p-8 space-y-5" data-tilt data-tilt-max="4" data-tilt-speed="400">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-mono uppercase font-bold tracking-widest text-orange-400">01 // REVENUE & LOGISTICS</span>
-            <span class="text-[10px] font-mono text-neutral-500">LIVE_SYNC</span>
-          </div>
-
+        <!-- Pricing Matrix -->
+        <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
+          <span class="text-xs font-mono text-orange-400 uppercase tracking-widest font-bold">// 01: RETAIL & SHIPPING CHARGE</span>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Listing Retail Price (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="itemPrice" value="160" class="input-stealth w-full rounded-2xl px-4 py-3.5 text-white font-mono font-bold text-xl">
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-neutral-400">Selling Price (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemPrice" value="160" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-bold text-lg">
             </div>
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Shipping Charged (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="shipCharge" value="0" class="input-stealth w-full rounded-2xl px-4 py-3.5 text-white font-mono font-bold text-xl">
-            </div>
-          </div>
-        </div>
-
-        <!-- Overheads Node -->
-        <div class="glass-stealth rounded-3xl p-6 sm:p-8 space-y-5" data-tilt data-tilt-max="4" data-tilt-speed="400">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-mono uppercase font-bold tracking-widest text-emerald-400">02 // PRODUCTION & BASE EXPENSES</span>
-            <span class="text-[10px] font-mono text-neutral-500">COST_ENGINE</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Item Cost (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="itemCost" value="40" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Actual Ship (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="shipCost" value="25" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-medium text-neutral-300">Labor/Pack (<span class="currency-symbol">$</span>)</label>
-              <input type="number" id="overheadCost" value="10" class="input-stealth w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-neutral-400">Shipping Charged to Buyer (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCharge" value="0" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-bold text-lg">
             </div>
           </div>
         </div>
 
-        <!-- Dynamic Toggles -->
+        <!-- Overheads (Without Labor) -->
+        <div class="stealth-card rounded-3xl p-6 space-y-4" data-tilt data-tilt-max="2">
+          <span class="text-xs font-mono text-neutral-300 uppercase tracking-widest font-bold">// 02: FORGE COST & POSTAGE</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-neutral-400">Material / Production (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="itemCost" value="45" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-mono text-neutral-400">Actual Shipping Cost (<span class="currency-symbol">$</span>)</label>
+              <input type="number" id="shipCost" value="25" class="stealth-input w-full rounded-2xl px-4 py-3 text-white font-mono font-semibold">
+            </div>
+          </div>
+        </div>
+
+        <!-- Toggles -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label class="glass-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
+          <label class="stealth-card rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
               <p class="text-sm font-bold text-white">Offsite Ads (15%)</p>
-              <p class="text-xs text-neutral-400">Etsy external marketing cut</p>
+              <p class="text-[11px] font-mono text-neutral-500">Attributed sales cut</p>
             </div>
             <input type="checkbox" id="offsiteAds" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
 
-          <label class="glass-stealth rounded-2xl p-4 flex items-center justify-between cursor-pointer">
+          <label class="stealth-card rounded-2xl p-4 flex items-center justify-between cursor-pointer">
             <div>
               <p class="text-sm font-bold text-white">Etsy Plus Plan</p>
-              <p class="text-xs text-neutral-400">Free monthly listing credits</p>
+              <p class="text-[11px] font-mono text-neutral-500">Zero individual listing fee</p>
             </div>
             <input type="checkbox" id="etsyPlus" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
           </label>
         </div>
 
         <!-- Reverse Target Solver -->
-        <div class="glass-stealth rounded-3xl p-6 space-y-4 border-orange-500/30">
+        <div class="stealth-card rounded-3xl p-5 space-y-3 border-orange-500/20">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono uppercase font-bold text-orange-400 tracking-wider">🎯 REVERSE PROFIT TARGET SOLVER</span>
-            <span class="text-[10px] font-mono text-neutral-500">ALGO_SOLVE</span>
+            <span class="text-xs font-mono uppercase text-orange-400 font-bold">🎯 TARGET PROFIT SOLVER</span>
           </div>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input type="number" id="targetProfit" placeholder="Desired Net Profit ($)" class="input-stealth w-full rounded-2xl px-4 py-3 text-sm text-white font-mono">
-            <button onclick="calculateTargetPrice()" class="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-black font-bold font-mono text-xs rounded-2xl transition-all shrink-0 shadow-lg shadow-orange-500/30">SOLVE PRICE</button>
+          <div class="flex gap-2">
+            <input type="number" id="targetProfit" placeholder="Desired Net Profit ($)" class="stealth-input w-full rounded-2xl px-4 py-2.5 text-xs font-mono text-white">
+            <button onclick="calculateTargetPrice()" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-mono font-bold text-xs rounded-2xl transition-all shrink-0">SOLVE</button>
           </div>
-          <p id="targetResult" class="text-xs font-mono text-neutral-200 hidden p-3.5 rounded-xl bg-orange-500/10 border border-orange-500/30"></p>
+          <p id="targetResult" class="text-xs font-mono text-neutral-300 hidden p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20"></p>
         </div>
 
       </section>
 
-      <!-- Right Column: Live Holographic HUD (5 Cols) -->
-      <section class="lg:col-span-5 space-y-6">
+      <!-- Right: Real-time Telemetry (6 Cols) -->
+      <section class="lg:col-span-6 space-y-6">
         
-        <!-- Net Realized Profit Hero -->
-        <div class="glass-stealth neon-pulse rounded-3xl p-8 space-y-5 border-emerald-500/40 relative overflow-hidden" data-tilt data-tilt-max="6">
+        <!-- Net Realized Profit (Flame Amber Theme - Zero Green) -->
+        <div class="stealth-card flame-glow rounded-[2.5rem] p-8 md:p-10 space-y-6 border-orange-500/30 relative overflow-hidden" data-tilt data-tilt-max="4">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400">NET REALIZED PROFIT</span>
-            <span class="text-xs px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-bold" id="marginDisplay">0% MARGIN</span>
+            <span class="text-xs font-mono uppercase tracking-widest text-orange-400 font-bold">NET REALIZED PROFIT</span>
+            <span class="text-xs px-3.5 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-200 font-mono font-bold" id="marginDisplay">0% MARGIN</span>
           </div>
-          
-          <div class="text-5xl sm:text-6xl font-black font-display text-white tracking-tight" id="netProfit">
+
+          <div class="text-6xl md:text-7xl font-black font-mono tracking-tight text-white" id="netProfit">
             $0.00
           </div>
 
-          <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
+          <div class="grid grid-cols-2 gap-4 pt-6 border-t border-neutral-800/80 font-mono text-xs">
             <div>
-              <p class="text-neutral-400">GROSS REVENUE</p>
-              <p class="text-lg font-bold text-white mt-1" id="totalRev">$0.00</p>
+              <p class="text-neutral-500 uppercase">Gross Revenue</p>
+              <p class="text-xl font-bold text-white mt-1" id="totalRev">$0.00</p>
             </div>
             <div>
-              <p class="text-neutral-400">TOTAL EXPENSES</p>
-              <p class="text-lg font-bold text-rose-400 mt-1" id="totalExp">$0.00</p>
+              <p class="text-neutral-500 uppercase">Total Expenses</p>
+              <p class="text-xl font-bold text-rose-400 mt-1" id="totalExp">$0.00</p>
             </div>
           </div>
         </div>
 
-        <!-- Live Fee Breakdown Matrix -->
-        <div class="glass-stealth rounded-3xl p-6 space-y-3 font-mono text-xs">
-          <div class="flex justify-between pb-2 border-b border-white/5">
+        <!-- Telemetry Breakdown Grid -->
+        <div class="stealth-card rounded-3xl p-6 font-mono text-xs space-y-3">
+          <div class="flex justify-between pb-2 border-b border-neutral-900">
             <span class="text-neutral-400">Listing Fee</span>
-            <span class="font-bold text-neutral-200" id="feeListing">$0.20</span>
+            <span class="text-neutral-200" id="feeListing">$0.20</span>
           </div>
-          <div class="flex justify-between pb-2 border-b border-white/5">
-            <span class="text-neutral-400">Transaction Cut (6.5%)</span>
-            <span class="font-bold text-neutral-200" id="feeTx">$0.00</span>
+          <div class="flex justify-between pb-2 border-b border-neutral-900">
+            <span class="text-neutral-400">Transaction Fee (6.5%)</span>
+            <span class="text-neutral-200" id="feeTx">$0.00</span>
           </div>
-          <div class="flex justify-between pb-2 border-b border-white/5">
-            <span class="text-neutral-400">Payment Gateway (3% + $0.25)</span>
-            <span class="font-bold text-neutral-200" id="feeProc">$0.00</span>
+          <div class="flex justify-between pb-2 border-b border-neutral-900">
+            <span class="text-neutral-400">Payment Processing (3% + $0.25)</span>
+            <span class="text-neutral-200" id="feeProc">$0.00</span>
           </div>
-          <div class="flex justify-between font-bold text-rose-400 pt-2 border-t border-white/10 text-sm">
-            <span>Total Etsy Deductions</span>
+          <div class="flex justify-between font-bold text-rose-400 pt-1">
+            <span>Total Etsy Commission</span>
             <span id="totalEtsyFees">$0.00</span>
           </div>
         </div>
-
-        <!-- 3D Chart Canvas -->
-        <div class="glass-stealth rounded-3xl p-5 flex items-center justify-center h-48 relative">
-          <canvas id="profitChart"></canvas>
-        </div>
-
-        <!-- CSV Export -->
-        <button onclick="exportCSV()" class="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-white font-mono font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-2xl">
-          <span>⚡ DOWNLOAD ORDER REPORT (.CSV)</span>
-        </button>
 
       </section>
 
     </main>
 
-    <!-- Footer Status -->
-    <footer class="text-center pt-8 border-t border-white/5 text-[11px] font-mono text-neutral-500">
-      ETSY APEX 3D ENGINE • HARDWARE ACCELERATED WEBGL • FULLY CLIENT-SIDE
+    <!-- Footer HUD with Store Signature -->
+    <footer class="pt-6 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-neutral-500">
+      <div>
+        <span>ENGINEERED BY <b class="text-neutral-300 font-brand">HABIB NASEER</b> // SEER FORGE • DEER EDGE</span>
+      </div>
+      <button onclick="exportCSV()" class="hover:text-orange-400 text-neutral-400 transition-colors uppercase">📥 EXPORT METRICS (.CSV)</button>
     </footer>
+
   </div>
 
-  <!-- Three.js 3D Space Engine -->
+  <!-- 3D Three.js Forge Core -->
   <script>
-    /* ================= THREE.JS 3D BACKGROUND ENGINE ================= */
-    const canvas = document.getElementById('webgl-bg');
+    const canvas = document.getElementById('webgl-canvas');
+    const container = document.getElementById('canvas-container');
+    
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    camera.position.z = 40;
+    function resize() {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    camera.position.z = 24;
 
-    // 1. Interactive 3D Holographic Crystal Core (Right-Center Float)
-    const crystalGeo = new THREE.IcosahedronGeometry(14, 1);
-    const crystalMat = new THREE.MeshBasicMaterial({
+    // 1. Damascus Damascus/Flame Geometric Core
+    const coreGeo = new THREE.IcosahedronGeometry(7, 2);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0a0a,
+      metalness: 0.95,
+      roughness: 0.1,
+      wireframe: true,
+      wireframeLinewidth: 1.5
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(coreMesh);
+
+    // 2. Molten Steel Core Glow
+    const innerGeo = new THREE.SphereGeometry(3.8, 32, 32);
+    const innerMat = new THREE.MeshBasicMaterial({
       color: 0xf97316,
       wireframe: true,
       transparent: true,
-      opacity: 0.28
+      opacity: 0.25
     });
-    const crystalCore = new THREE.Mesh(crystalGeo, crystalMat);
-    crystalCore.position.set(15, 0, -5);
-    scene.add(crystalCore);
+    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+    scene.add(innerMesh);
 
-    // Inner Glowing Core
-    const innerGeo = new THREE.OctahedronGeometry(7, 0);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35
-    });
-    const innerCore = new THREE.Mesh(innerGeo, innerMat);
-    crystalCore.add(innerCore);
-
-    // 2. Cosmic Dust & Cyber Grid Space
-    const count = 1200;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-
-    for (let i = 0; i < count * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 150;
-      positions[i + 1] = (Math.random() - 0.5) * 150;
-      positions[i + 2] = (Math.random() - 0.5) * 150;
-
-      colors[i] = 0.97;
-      colors[i + 1] = Math.random() > 0.5 ? 0.45 : 0.72;
-      colors[i + 2] = 0.08;
+    // 3. Floating Forge Particles
+    const pointGeo = new THREE.BufferGeometry();
+    const pointCount = 600;
+    const pos = new Float32Array(pointCount * 3);
+    for(let i=0; i<pointCount*3; i+=3) {
+      pos[i] = (Math.random() - 0.5) * 38;
+      pos[i+1] = (Math.random() - 0.5) * 38;
+      pos[i+2] = (Math.random() - 0.5) * 38;
     }
-
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
+    pointGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const pointMat = new THREE.PointsMaterial({
-      size: 0.9,
-      vertexColors: true,
+      size: 0.22,
+      color: 0xf97316,
       transparent: true,
-      opacity: 0.55
+      opacity: 0.6
     });
-    const particles = new THREE.Points(geometry, pointMat);
-    scene.add(particles);
+    const points = new THREE.Points(pointGeo, pointMat);
+    scene.add(points);
 
-    // Dynamic Parallax Mouse Tracker
-    let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+    // Forge Flame Lighting
+    const light1 = new THREE.PointLight(0xf97316, 6, 60);
+    light1.position.set(10, 10, 15);
+    scene.add(light1);
 
+    const light2 = new THREE.PointLight(0xffedd5, 2, 40);
+    light2.position.set(-10, -10, 10);
+    scene.add(light2);
+
+    let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX - window.innerWidth / 2) * 0.0008;
-      mouseY = (e.clientY - window.innerHeight / 2) * 0.0008;
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
 
-    function pulseCrystal() {
-      crystalMat.opacity = 0.6;
-      innerMat.opacity = 0.8;
-      setTimeout(() => {
-        crystalMat.opacity = 0.28;
-        innerMat.opacity = 0.35;
-      }, 300);
-    }
+    function animate() {
+      requestAnimationFrame(animate);
 
-    function renderLoop() {
-      requestAnimationFrame(renderLoop);
+      coreMesh.rotation.x += 0.003;
+      coreMesh.rotation.y += 0.005;
+      
+      innerMesh.rotation.x -= 0.002;
+      innerMesh.rotation.y -= 0.004;
 
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
+      points.rotation.y += 0.0008;
 
-      crystalCore.rotation.x += 0.003;
-      crystalCore.rotation.y += 0.005;
-      innerCore.rotation.x -= 0.006;
-      innerCore.rotation.y -= 0.008;
-
-      particles.rotation.y += 0.0008;
-      particles.rotation.x += 0.0004;
-
-      camera.position.x = targetX * 25;
-      camera.position.y = -targetY * 25;
-      camera.lookAt(scene.position);
+      coreMesh.position.x += (mouseX * 2 - coreMesh.position.x) * 0.05;
+      coreMesh.position.y += (-mouseY * 2 - coreMesh.position.y) * 0.05;
 
       renderer.render(scene, camera);
     }
-    renderLoop();
+    animate();
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    /* ================= DYNAMIC BUSINESS LOGIC ================= */
+    /* ================= CALCULATOR ENGINE ================= */
     let activeCurrency = '$';
-    let chartInstance = null;
-    const inputIds = ['itemPrice', 'shipCharge', 'itemCost', 'shipCost', 'overheadCost', 'offsiteAds', 'etsyPlus'];
+    const inputIds = ['itemPrice', 'shipCharge', 'itemCost', 'shipCost', 'offsiteAds', 'etsyPlus'];
 
     function setCurrency(symbol, code) {
       activeCurrency = symbol;
@@ -375,7 +356,7 @@
       ['currUSD', 'currGBP', 'currEUR'].forEach(id => {
         document.getElementById(id).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold text-neutral-400 hover:text-white transition-all';
       });
-      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-black shadow-lg transition-all';
+      document.getElementById('curr' + code).className = 'px-4 py-2 rounded-xl text-xs font-mono font-bold bg-orange-500 text-white transition-all shadow-lg shadow-orange-500/20';
       
       calculate();
     }
@@ -385,7 +366,6 @@
       const shipCharge = parseFloat(document.getElementById('shipCharge').value) || 0;
       const itemCost = parseFloat(document.getElementById('itemCost').value) || 0;
       const shipCost = parseFloat(document.getElementById('shipCost').value) || 0;
-      const overhead = parseFloat(document.getElementById('overheadCost').value) || 0;
       const adsChecked = document.getElementById('offsiteAds').checked;
       const etsyPlus = document.getElementById('etsyPlus').checked;
 
@@ -397,7 +377,7 @@
       const adsFee = adsChecked ? revenue * 0.15 : 0.00;
 
       const totalFees = listingFee + txFee + procFee + adsFee;
-      const productionCosts = itemCost + shipCost + overhead;
+      const productionCosts = itemCost + shipCost;
       const totalExpenses = productionCosts + totalFees;
       const netProfit = revenue - totalExpenses;
       const margin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
@@ -410,35 +390,6 @@
       document.getElementById('feeTx').innerText = `${activeCurrency}${txFee.toFixed(2)}`;
       document.getElementById('feeProc').innerText = `${activeCurrency}${procFee.toFixed(2)}`;
       document.getElementById('totalEtsyFees').innerText = `${activeCurrency}${totalFees.toFixed(2)}`;
-
-      pulseCrystal();
-      updateChart(productionCosts, totalFees, Math.max(0, netProfit));
-    }
-
-    function updateChart(costs, fees, profit) {
-      const ctx = document.getElementById('profitChart').getContext('2d');
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Production & Ship', 'Etsy Fees', 'Net Profit'],
-          datasets: [{
-            data: [costs, fees, profit],
-            backgroundColor: ['#334155', '#f43f5e', '#10b981'],
-            borderWidth: 0,
-            hoverOffset: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'right', labels: { boxWidth: 8, color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } }
-          },
-          cutout: '76%'
-        }
-      });
     }
 
     function calculateTargetPrice() {
@@ -447,17 +398,16 @@
 
       const itemCost = parseFloat(document.getElementById('itemCost').value) || 0;
       const shipCost = parseFloat(document.getElementById('shipCost').value) || 0;
-      const overhead = parseFloat(document.getElementById('overheadCost').value) || 0;
       const adsChecked = document.getElementById('offsiteAds').checked;
       
-      const fixedOverhead = itemCost + shipCost + overhead + 0.20 + 0.25;
+      const fixedOverhead = itemCost + shipCost + 0.20 + 0.25;
       const variableFeePercent = 0.065 + 0.03 + (adsChecked ? 0.15 : 0.0);
       
       const requiredPrice = (target + fixedOverhead) / (1 - variableFeePercent);
       
       const resElem = document.getElementById('targetResult');
       resElem.classList.remove('hidden');
-      resElem.innerHTML = `TARGET ACQUIRED: List item at <b class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</b> to net a pure profit of ${activeCurrency}${target.toFixed(2)}`;
+      resElem.innerHTML = `TARGET LOCKED: List at <b class="text-orange-400 font-bold">${activeCurrency}${requiredPrice.toFixed(2)}</b> for pure profit of ${activeCurrency}${target.toFixed(2)}`;
     }
 
     function exportCSV() {
@@ -469,6 +419,9 @@
 
       const csvContent = "data:text/csv;charset=utf-8," + 
         "Metric,Value\n" + 
+        `Brand,Seer Forge\n` +
+        `Company,Deer Edge\n` +
+        `Creator,Habib Naseer\n` +
         `Item Retail Price,${p}\n` +
         `Total Revenue,${rev}\n` +
         `Total Fees,${fee}\n` +
@@ -478,7 +431,7 @@
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "etsy_apex_metrics.csv");
+      link.setAttribute("download", "seer_forge_order_metrics.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
